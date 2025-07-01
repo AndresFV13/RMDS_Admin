@@ -21,6 +21,8 @@ import Home from "./pages/Dashboard/Home";
 import BasicTablesPlans from "./pages/Tables/BasicTablesPlans";
 import BasicTablesBlog from "./pages/Tables/BasicTablesBlog";
 import BasicTableReservations from "./components/tables/BasicTables/BasicTableReservation";
+import { ProtectedRoute } from './ProtectedRoute';
+import { PublicRoute } from "./PublicRoute";
 
 export default function App() {
   return (
@@ -28,8 +30,29 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <Routes>
-          {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
+          <Route
+            path="/signin"
+            element={
+              <PublicRoute>
+                <SignIn />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <PublicRoute>
+                <SignUp />
+              </PublicRoute>
+            }
+          />
+          <Route
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route index path="/" element={<Home />} />
 
             {/* Others Page */}
