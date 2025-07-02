@@ -3,7 +3,6 @@ import { ApexOptions } from "apexcharts";
 import ChartTab from "../common/ChartTab";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../services/api";
-import { data } from "react-router";
 
 export default function GraficoEstadisticas() {
   const [ventas, setVentas] = useState<number[]>([]);
@@ -19,11 +18,11 @@ export default function GraficoEstadisticas() {
 
   const opciones: ApexOptions = {
     legend: {
-      show: false, // Ocultar leyenda
+      show: false, 
       position: "top",
       horizontalAlign: "left",
     },
-    colors: ["#465FFF", "#9CB9FF"], // Colores de las líneas
+    colors: ["#465FFF", "#9CB9FF"], 
     chart: {
       fontFamily: "Outfit, sans-serif",
       height: 310,

@@ -51,10 +51,10 @@ const navItems: NavItem[] = [
 const othersItems: NavItem[] = [
   {
     icon: <PieChartIcon />,
-    name: "Charts",
+    name: "Estadisticas",
     subItems: [
-      { name: "Line Chart", path: "/line-chart", pro: false },
-      { name: "Bar Chart", path: "/bar-chart", pro: false },
+      { name: "Ganancias", path: "/line-chart", pro: false },
+      { name: "Ventas", path: "/bar-chart", pro: false },
     ],
   },
   // {

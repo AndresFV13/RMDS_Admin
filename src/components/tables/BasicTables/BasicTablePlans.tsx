@@ -83,7 +83,7 @@ export default function BasicTablePlans() {
           <div key={plan.id} className="rounded-xl border bg-white shadow-md overflow-hidden">
             {plan.image && (
               <img
-                src={`http://localhost:3000/uploads/${plan.image}`}
+                src={plan.image}
                 alt={plan.title}
                 className="w-full h-48 object-cover"
               />
