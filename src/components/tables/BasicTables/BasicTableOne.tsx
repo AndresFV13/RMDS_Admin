@@ -4,6 +4,8 @@ import Button from "../../ui/button/Button";
 import { Modal } from "../../ui/modal";
 import Label from "../../form/Label";
 import Input from "../../form/input/InputField";
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const API_URL = "http://localhost:3000/places";
 
@@ -73,12 +75,65 @@ export default function BasicTableOne() {
     fetchPlaces();
   };
 
-  const deletePlace = async (id: number) => {
-    if (confirm("¿Estás seguro de eliminar este lugar?")) {
-      await axios.delete(`${API_URL}/${id}`);
-      fetchPlaces();
-    }
-  };
+const swalWithTailwindButtons = Swal.mixin({
+  customClass: {
+    confirmButton: `
+      px-4 py-2 rounded 
+      bg-green-600 text-white 
+      hover:bg-green-700
+      mx-1
+      border-1
+    `,
+    cancelButton: `
+      px-4 py-2 rounded 
+      bg-red-600 text-white 
+      hover:bg-red-700
+      mx-1
+      border-1
+    `
+  },
+  buttonsStyling: false
+});
+
+const deletePlace = async (id: number) => {
+  // Lanza el diálogo de confirmación
+  const result = await swalWithTailwindButtons.fire({
+    title: "¿Estás seguro?",
+    text: "¡No podrás revertir esto!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "No, cancelar",
+    reverseButtons: true
+  });
+
+  if (result.isConfirmed) {
+    // Si confirma, eliminamos y recargamos la lista
+    await axios.delete(`${API_URL}/${id}`);
+    fetchPlaces();
+
+    // Mostramos un toast de éxito
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: 'Lugar eliminado.',
+      showConfirmButton: false,
+      timer: 2000
+    });
+  } else if (result.dismiss === Swal.DismissReason.cancel) {
+    // Si cancela, mostramos un toast de cancelación
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'error',
+      title: 'Eliminación cancelada.',
+      showConfirmButton: false,
+      timer: 2000
+    });
+  }
+};
+
 
   return (
     <div className="p-6">

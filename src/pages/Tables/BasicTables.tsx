@@ -11,7 +11,7 @@ export default function BasicTables() {
         description="This is React.js Basic Tables Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
       />
       <PageBreadcrumb pageTitle="Gestion de lugares" />
-      <div className="space-y-6">
+      <div className="space-y-6 dark:text-white">
         <ComponentCard title="Gestion de lugares">
           <BasicTableOne />
         </ComponentCard>
