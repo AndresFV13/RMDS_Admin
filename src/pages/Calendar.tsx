@@ -8,6 +8,9 @@ import { Modal } from "../components/ui/modal";
 import { useModal } from "../hooks/useModal";
 import PageMeta from "../components/common/PageMeta";
 import axiosInstance from "../services/api";
+import esLocale from "@fullcalendar/core/locales/es";
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 export interface CalendarEvent extends EventInput {
   id: string;
@@ -32,10 +35,10 @@ const Calendar: React.FC = () => {
   const { isOpen, openModal, closeModal } = useModal();
 
   const calendarsEvents = {
-    Danger: "danger",
-    Success: "success",
-    Primary: "primary",
-    Warning: "warning",
+    Aviso: "Aviso",
+    Exito: "Exito",
+    Primario: "Primario",
+    Advertencia: "Advertencia",
   };
 
   const isValidFutureDate = (date: string) => {
@@ -88,11 +91,22 @@ const Calendar: React.FC = () => {
     today.setHours(0, 0, 0, 0); 
 
     const isPast = selectedDate < today;
-
-    if (isPast) {
-      alert("No puedes crear eventos en fechas pasadas.");
-      return;
+if (isPast) {
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    icon: 'error',
+    title: 'No puedes crear eventos en fechas pasadas.',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toastEl) => {
+      toastEl.addEventListener('mouseenter', Swal.stopTimer)
+      toastEl.addEventListener('mouseleave', Swal.resumeTimer)
     }
+  });
+  return;
+}
 
     resetModalFields();
     setEventStartDate(selectInfo.startStr);
@@ -112,16 +126,28 @@ const Calendar: React.FC = () => {
 
   const handleAddOrUpdateEvent = async () => {
     if (!isValidFutureDate(eventStartDate)) {
-      alert("No puedes agregar eventos en días pasados.");
-      return;
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'error',
+      title: 'No puedes agregar eventos en días pasados.',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toastEl) => {
+        toastEl.addEventListener('mouseenter', Swal.stopTimer)
+        toastEl.addEventListener('mouseleave', Swal.resumeTimer)
     }
+  });
+  return;
+}
 
     const newEvent = {
       title: eventTitle,
       start: eventStartDate,
       end: eventEndDate || undefined, 
       allDay: true,
-      calendar: eventLevel || "Primary",
+      calendar: eventLevel || "Primario",
     };
 
     try {
@@ -165,6 +191,7 @@ const Calendar: React.FC = () => {
             ref={calendarRef}
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
+            locale={esLocale}
             headerToolbar={{
               left: "prev,next addEventButton",
               center: "title",
@@ -177,7 +204,7 @@ const Calendar: React.FC = () => {
             eventContent={renderEventContent}
             customButtons={{
               addEventButton: {
-                text: "Add Event +",
+                text: "Añadir Evento +",
                 click: openModal,
               },
             }}
@@ -193,20 +220,19 @@ const Calendar: React.FC = () => {
 
             <div className="mt-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium">Título</label>
+                <label className="block text-sm font-medium dark:text-white">Título</label>
                 <input
-                  type="text"
-                  value={eventTitle}
-                  onChange={(e) => setEventTitle(e.target.value)}
-                  className="w-full rounded border px-3 py-2"
-                />
+                type="text"
+                value={eventTitle}
+                onChange={(e) => setEventTitle(e.target.value)}
+                placeholder="Ingresa el título del evento aquí"
+                className="w-full rounded border px-3 py-2 dark:text-white"/>
               </div>
-
               <div>
-                <label className="block text-sm font-medium">Color / Tipo</label>
+                <label className="block text-sm font-medium dark:text-white">Tipo</label>
                 <div className="flex flex-wrap gap-3">
                   {Object.entries(calendarsEvents).map(([key, value]) => (
-                    <label key={key} className="flex items-center gap-2">
+                    <label key={key} className="flex items-center gap-2 dark:text-white">
                       <input
                         type="radio"
                         name="calendar-color"
@@ -221,22 +247,22 @@ const Calendar: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium">Fecha de inicio</label>
+                <label className="block text-sm font-medium dark:text-white">Fecha de inicio</label>
                 <input
                   type="date"
                   value={eventStartDate}
                   onChange={(e) => setEventStartDate(e.target.value)}
-                  className="w-full rounded border px-3 py-2"
+                  className="w-full rounded border px-3 py-2 dark:text-white"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium">Fecha de fin</label>
+                <label className="block text-sm font-medium dark:text-white">Fecha de fin</label>
                 <input
                   type="date"
                   value={eventEndDate}
                   onChange={(e) => setEventEndDate(e.target.value)}
-                  className="w-full rounded border px-3 py-2"
+                  className="w-full rounded border px-3 py-2 dark:text-white"
                 />
               </div>
 
@@ -256,7 +282,7 @@ const Calendar: React.FC = () => {
                     Eliminar
                   </button>
                 )}
-                <button onClick={closeModal} className="px-4 py-2 text-sm border rounded">
+                <button onClick={closeModal} className="px-4 py-2 text-sm border rounded dark:text-white">
                   Cancelar
                 </button>
                 <button

@@ -776,3 +776,10 @@ span.flatpickr-weekday,
 .simplebar-scrollbar.simplebar-visible:before {
   @apply opacity-100;
 }
+
+
+/* Sweetalert2 conf*/
+
+.swal2-container {
+  z-index: 99999 !important;
+}
