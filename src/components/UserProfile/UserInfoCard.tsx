@@ -7,9 +7,10 @@ import Label from "../form/Label";
 import api from "../../services/api"
 import { User } from "../../types/user/User";
 
-const userId = 1; 
-
 export default function UserInfoCard() {
+
+  const userId = localStorage.getItem('userId');
+
   const { isOpen, openModal, closeModal } = useModal();
 
   const [formData, setFormData] = useState({
