@@ -1,8 +1,22 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import ChartTab from "../common/ChartTab";
+import { useEffect, useState } from "react";
+import axiosInstance from "../../services/api";
+import { data } from "react-router";
 
 export default function GraficoEstadisticas() {
+  const [ventas, setVentas] = useState<number[]>([]);
+  const [ingresos, setIngresos] = useState<number[]>([]);
+
+  useEffect(() => {
+    axiosInstance.get<{ data: number[] }>("/reservations/monthly-summary")
+      .then(res => setVentas(res.data.data));
+
+    axiosInstance.get<{ data: number[] }>("/reservations/monthly-income")
+      .then(res => setIngresos(res.data.data));
+  }, []);
+
   const opciones: ApexOptions = {
     legend: {
       show: false, // Ocultar leyenda
@@ -93,11 +107,11 @@ export default function GraficoEstadisticas() {
   const series = [
     {
       name: "Ventas",
-      data: [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
+      data: ventas,
     },
     {
       name: "Ingresos",
-      data: [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
+      data: ingresos,
     },
   ];
 

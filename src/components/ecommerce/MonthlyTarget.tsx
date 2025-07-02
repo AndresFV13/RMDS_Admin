@@ -1,12 +1,33 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
-import { useState } from "react";
-import { Dropdown } from "../ui/dropdown/Dropdown";
-import { DropdownItem } from "../ui/dropdown/DropdownItem";
-import { MoreDotIcon } from "../../icons";
+import { useEffect, useState } from "react";
+import axiosInstance from "../../services/api";
 
 export default function ObjetivoMensual() {
-  const series = [75.55];
+  const objetivoMensual = 20000;
+  const [monthTotal, setMonthTotal] = useState(0);
+  const [todayTotal, setTodayTotal] = useState(0);
+
+  
+  useEffect(() => {
+    axiosInstance
+      .get<{ data: { monthTotal: number; todayTotal: number } }>(
+        "/reservations/monthly-goal"
+      )
+      .then((res) => {
+        setMonthTotal(res.data.data.monthTotal);
+        setTodayTotal(res.data.data.todayTotal);
+      })
+      .catch(() => {
+        setMonthTotal(0);
+        setTodayTotal(0);
+      });
+  }, []);
+
+  const progreso = (monthTotal / objetivoMensual) * 100;
+
+  const series = [parseFloat(progreso.toFixed(2))];
+
   const opciones: ApexOptions = {
     colors: ["#465FFF"],
     chart: {
@@ -55,50 +76,17 @@ export default function ObjetivoMensual() {
     labels: ["Progreso"],
   };
 
-  const [estaAbierto, setEstaAbierto] = useState(false);
-
-  function alternarDropdown() {
-    setEstaAbierto(!estaAbierto);
-  }
-
-  function cerrarDropdown() {
-    setEstaAbierto(false);
-  }
-
   return (
     <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03]">
       <div className="px-5 pt-5 bg-white shadow-default rounded-2xl pb-11 dark:bg-gray-900 sm:px-6 sm:pt-6">
         <div className="flex justify-between">
           <div>
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-              Objetivo Mensual
+              Ingresos Mensual
             </h3>
             <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
               Meta establecida para cada mes
             </p>
-          </div>
-          <div className="relative inline-block">
-            <button className="dropdown-toggle" onClick={alternarDropdown}>
-              <MoreDotIcon className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 size-6" />
-            </button>
-            <Dropdown
-              isOpen={estaAbierto}
-              onClose={cerrarDropdown}
-              className="w-40 p-2"
-            >
-              <DropdownItem
-                onItemClick={cerrarDropdown}
-                className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
-              >
-                Ver más
-              </DropdownItem>
-              <DropdownItem
-                onItemClick={cerrarDropdown}
-                className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
-              >
-                Eliminar
-              </DropdownItem>
-            </Dropdown>
           </div>
         </div>
 
@@ -111,50 +99,23 @@ export default function ObjetivoMensual() {
               height={330}
             />
           </div>
-
-          <span className="absolute left-1/2 top-full -translate-x-1/2 -translate-y-[95%] rounded-full bg-success-50 px-3 py-1 text-xs font-medium text-success-600 dark:bg-success-500/15 dark:text-success-500">
-            +10%
-          </span>
         </div>
 
         <p className="mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
-          Ganaste $3287 hoy, es más que el mes pasado. ¡Sigue con el buen trabajo!
+          {todayTotal > 0
+            ? `Ganaste $${todayTotal.toLocaleString()} hoy. ¡Sigue con el buen trabajo!`
+            : "¡Vamos, sé que tú puedes!"
+          }
         </p>
       </div>
 
       <div className="flex items-center justify-center gap-5 px-6 py-3.5 sm:gap-8 sm:py-5">
         <div>
           <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
-            Meta
+            Ingresos Totales
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
-            $20K
-            {/* Flecha hacia abajo */}
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M7.26816 13.6632C7.4056 13.8192 7.60686 13.9176 7.8311 13.9176C7.83148 13.9176 7.83187 13.9176 7.83226 13.9176C8.02445 13.9178 8.21671 13.8447 8.36339 13.6981L12.3635 9.70076C12.6565 9.40797 12.6567 8.9331 12.3639 8.6401C12.0711 8.34711 11.5962 8.34694 11.3032 8.63973L8.5811 11.36V2.5C8.5811 2.08579 8.24531 1.75 7.8311 1.75C7.41688 1.75 7.0811 2.08579 7.0811 2.5V11.3556L4.36354 8.63975C4.07055 8.34695 3.59568 8.3471 3.30288 8.64009C3.01008 8.93307 3.01023 9.40794 3.30321 9.70075L7.26816 13.6632Z"
-                fill="#D92D20"
-              />
-            </svg>
-          </p>
-        </div>
-
-        <div className="w-px bg-gray-200 h-7 dark:bg-gray-800"></div>
-
-        <div>
-          <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
-            Ingresos
-          </p>
-          <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
-            $20K
+            ${monthTotal.toLocaleString()}
             {/* Flecha hacia arriba */}
             <svg
               width="16"
@@ -180,7 +141,7 @@ export default function ObjetivoMensual() {
             Hoy
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
-            $20K
+            ${todayTotal.toLocaleString()}
             {/* Flecha hacia arriba */}
             <svg
               width="16"
