@@ -84,16 +84,10 @@ const AppHeader: React.FC = () => {
           </button>
 
           <Link to="/" className="lg:hidden">
-            <img
+            <h3
               className="dark:hidden"
-              src="./images/logo/logo.svg"
-              alt="Logo"
-            />
-            <img
-              className="hidden dark:block"
-              src="./images/logo/logo-dark.svg"
-              alt="Logo"
-            />
+            > NEXUS</h3>
+            <h3 className="hidden dark:block text-white">NEXUS</h3>
           </Link>
 
           <button

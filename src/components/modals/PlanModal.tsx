@@ -52,11 +52,10 @@ const PlanModal: FC<PlanModalProps> = ({ isOpen, onClose, onSubmitSuccess, editD
     formData.append('price', price.toString());
     formData.append('placeIds', JSON.stringify(placeIds));
     formData.append('additional', additional);
-    if (image) formData.append('image', image);
 
-    if (editData) {
-      console.log(`ID del plan a editar: ${editData.id}`);
-    }
+    if (image) {
+      formData.append('image', image);
+    } 
 
     try {
       if (editData) {
@@ -66,12 +65,17 @@ const PlanModal: FC<PlanModalProps> = ({ isOpen, onClose, onSubmitSuccess, editD
           },
         });
       } else {
-        await axiosInstance.post('/plans', formData);
+        await axiosInstance.post('/plans', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
       }
+
       onSubmitSuccess();
       onClose();
     } catch (error) {
-      console.error('Error al guardar el plan:', error);
+      console.error('❌ Error al guardar el plan:', error);
     }
   };
 
